@@ -65,6 +65,7 @@
                     <th scope="col">Precio</th>
                     <th scope="col">Stock</th>
                     <th scope="col">Categoría</th>
+                    <th scope="col">Acciones</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -73,6 +74,10 @@
                     <td th:text="'S/ ' + ${producto.precio}"></td>
                     <td th:text="${producto.stock}"></td>
                     <td th:text="${producto.categoria}"></td>
+                    <td>
+                        <a th:href="@{'/editar_producto/' + ${producto.id}}" class="btn btn-info btn-sm">Editar</a>
+                        <a th:href="@{'/eliminar_producto/' + ${producto.id}}" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar este producto?')">Eliminar</a>
+                    </td>
                 </tr>
                 </tbody>
             </table>

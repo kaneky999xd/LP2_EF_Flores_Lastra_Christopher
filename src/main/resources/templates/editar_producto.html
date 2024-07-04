@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<link rel="stylesheet" href="/css/actualizar.css">
+
+    <meta charset="UTF-8">
+    <title>Editar Producto</title>
+</head>
+<body>
+    <h2>Editar Producto</h2>
+
+    <form action="#" th:action="@{/actualizar_producto/{id}(id=${producto.id})}" th:object="${producto}" method="post">
+        <input type="hidden" th:field="*{id}"/>
+        <p>Nombre: <input type="text" th:field="*{nombre}" /></p>
+        <p>Precio: <input type="text" th:field="*{precio}" /></p>
+        <p>Stock: <input type="text" th:field="*{stock}" /></p>
+        <p>Categoría: <input type="text" th:field="*{categoria}" /></p>
+        <p><input type="submit" value="Actualizar" /> <a href="/menu">Cancelar</a></p>
+    </form>
+
+</body>
+</html>

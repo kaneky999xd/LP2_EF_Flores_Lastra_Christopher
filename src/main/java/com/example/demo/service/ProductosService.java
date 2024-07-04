@@ -12,5 +12,7 @@ public interface ProductosService {
 
     ProductosEntity buscarProductoPorId(Long id);
     void crearProducto(ProductosEntity producto);
+
+    void actualizarProducto(ProductosEntity producto);
 }
  

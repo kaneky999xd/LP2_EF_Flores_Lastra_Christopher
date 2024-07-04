@@ -31,4 +31,19 @@ public class ProductoServiceImpl implements ProductosService{
 	    public void crearProducto(ProductosEntity producto) {
 	        productosRepository.save(producto);
 	    }
+	    
+	    @Override
+	    public void actualizarProducto(ProductosEntity producto) {
+	        productosRepository.save(producto);
+	    }
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
 	}

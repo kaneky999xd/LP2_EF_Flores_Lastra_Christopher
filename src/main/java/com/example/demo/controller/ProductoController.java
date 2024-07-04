@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import com.example.demo.entity.DetallePedidoEntity;
@@ -90,4 +91,40 @@ public class ProductoController {
         // Redirigir de vuelta al menú principal después de agregar el producto
         return "redirect:/menu";
     }
+    
+    
+    
+    //Actualizar producto
+    
+    @GetMapping("/editar_producto/{id}")
+    public String mostrarFormularioEdicion(@PathVariable("id") Long id, Model model) {
+        ProductosEntity producto = productoService.buscarProductoPorId(id);
+        model.addAttribute("producto", producto);
+        return "editar_producto"; // Nombre de la vista de edición (editar_producto.html)
+    }
+
+    @PostMapping("/actualizar_producto/{id}")
+    public String actualizarProducto(@PathVariable("id") Long id,
+                                     @RequestParam("nombre") String nombre,
+                                     @RequestParam("precio") Double precio,
+                                     @RequestParam("stock") Integer stock,
+                                     @RequestParam("categoria") String categoria) {
+
+        ProductosEntity productoActual = productoService.buscarProductoPorId(id);
+
+        if (productoActual != null) {
+            productoActual.setNombre(nombre);
+            productoActual.setPrecio(precio);
+            productoActual.setStock(stock);
+            productoActual.setCategoria(categoria);
+
+            productoService.actualizarProducto(productoActual);
+        }
+
+        return "redirect:/menu";
+    }
 }
+    
+    
+    
+    
