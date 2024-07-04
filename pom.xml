@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>temporal</artifactId>
+	<artifactId>LP2_EF_Flores_Lastra_Christopher</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>temporal</name>
+	<name>LP2_EF_Flores_Lastra_Christopher</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>
@@ -58,6 +58,15 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+
+            <groupId>org.mindrot</groupId>
+
+            <artifactId>jbcrypt</artifactId>
+
+            <version>0.4</version>
+
+        </dependency>
 	</dependencies>
 
 	<build>
