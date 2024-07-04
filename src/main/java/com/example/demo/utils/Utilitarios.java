@@ -3,16 +3,14 @@ package com.example.demo.utils;
 
 
 
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.web.multipart.MultipartFile;
-
-
 
 public class Utilitarios {
 
@@ -35,8 +33,7 @@ public class Utilitarios {
 			System.out.println(e.getMessage());
 			return null;
 		}
-}
-
+	}
 	
 	public static String extraerHash(String passwordInput) {
 		return BCrypt.hashpw(passwordInput, BCrypt.gensalt());

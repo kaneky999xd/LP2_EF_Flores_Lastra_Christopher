@@ -13,9 +13,6 @@ import jakarta.servlet.http.HttpSession;
 
 public interface UsuarioService {
 	void crearUsuario(UsuarioEntity usuarioEntity, Model model, MultipartFile foto);
-	 
-	
 	boolean validarUsuario(UsuarioEntity usuarioEntity, HttpSession session);
-	
 	UsuarioEntity buscarUsuarioPorCorreo(String correo);
 }

@@ -12,9 +12,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.entity.UsuarioEntity;
 import com.example.demo.service.UsuarioService;
-import com.example.demo.utils.Utilitarios;
 
 import jakarta.servlet.http.HttpSession;
+
+
+
 
 
 @Controller
@@ -29,27 +31,21 @@ public class UsuarioController {
 		model.addAttribute("usuario", new UsuarioEntity());
 		return "registrar_usuario";
 	}
-
+	
 	@PostMapping("/registrar")
 	public String registrarUsuario(UsuarioEntity usuarioEntity, Model model, 
 			@RequestParam("foto")MultipartFile foto) {
-		
-	
 		
 		usuarioService.crearUsuario(usuarioEntity, model, foto);
 		
 		return "registrar_usuario";
 	}
 	
-	
-	
 	@GetMapping("/")
 	public String index(Model model) {
 		model.addAttribute("usuario", new UsuarioEntity());
 		return "login";
 	}
-
-	
 	
 	@PostMapping("/login")
 	public String login(UsuarioEntity usuarioEntity, Model model, HttpSession session) {
@@ -61,16 +57,22 @@ public class UsuarioController {
 		model.addAttribute("usuario", new UsuarioEntity());
 		return "login";
 	}
-}
-	/*
+	
 	@GetMapping("/logout")
 	public String logout(HttpSession session) {
 		session.invalidate();
 		return "redirect:/";
 	}
-} */
 	
 	
+	
+	
+	
+	
+	
+	
+	
+}
 	
 	
 	
