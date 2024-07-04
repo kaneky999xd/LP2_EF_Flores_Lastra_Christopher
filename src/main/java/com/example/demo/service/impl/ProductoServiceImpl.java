@@ -35,6 +35,19 @@ public class ProductoServiceImpl implements ProductosService{
 	    @Override
 	    public void actualizarProducto(ProductosEntity producto) {
 	        productosRepository.save(producto);
+	        
+	        
+	        
+	    }
+	    @Override
+	    public void eliminarProducto(Long id) {
+	        productosRepository.deleteById(id);
+	    }
+	    
+	    
+	    @Override
+	    public List<ProductosEntity> obtenerTodosProductos() {
+	        return productosRepository.findAll();
 	    }
 	    
 	    
@@ -46,4 +59,7 @@ public class ProductoServiceImpl implements ProductosService{
 	    
 	    
 	    
-	}
+	    
+	    
+	    
+}

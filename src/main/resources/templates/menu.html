@@ -39,10 +39,12 @@
     <a class="navbar-brand" th:href="@{/menu}">Productos</a>
     <!-- Botón para Registrar Producto -->
     <a class="btn btn-outline-primary" th:href="@{/registrar_producto}" role="button">Registrar Producto</a>
-    <form class="form-inline my-2 my-lg-0" th:action="@{/search}" method="get">
-        <input class="form-control mr-sm-2" type="search" placeholder="Buscar" aria-label="Search" name="query">
-        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
-    </form>
+
+  <form action="/filtrar_producto" method="get">
+    <input type="number" name="id" placeholder="Ingrese ID del producto" required>
+    <button type="submit">Buscar</button>
+</form>
+
     <div class="form-inline my-2 my-lg-0 ml-auto">
         <img th:src="@{'/usuario_foto/' + ${foto}}" alt="Profile" class="profile-pic">
         <a class="btn btn-outline-danger ml-2" th:href="@{/logout}" role="button">Logout</a>
@@ -61,6 +63,7 @@
             <table class="table table-bordered">
                 <thead class="thead-dark">
                 <tr>
+                    <th scope="col">ID</th>
                     <th scope="col">Nombre</th>
                     <th scope="col">Precio</th>
                     <th scope="col">Stock</th>
@@ -70,13 +73,17 @@
                 </thead>
                 <tbody>
                 <tr th:each="producto : ${productos}">
+                    <td th:text="${producto.id}"></td> <!-- Mostrar ID del producto -->
                     <td th:text="${producto.nombre}"></td>
                     <td th:text="'S/ ' + ${producto.precio}"></td>
                     <td th:text="${producto.stock}"></td>
                     <td th:text="${producto.categoria}"></td>
                     <td>
                         <a th:href="@{'/editar_producto/' + ${producto.id}}" class="btn btn-info btn-sm">Editar</a>
-                        <a th:href="@{'/eliminar_producto/' + ${producto.id}}" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar este producto?')">Eliminar</a>
+                        <a th:href="@{'/detalles_producto/' + ${producto.id}}" class="btn btn-primary btn-sm">Detalles</a>
+                        <form th:action="@{'/eliminar_producto/' + ${producto.id}}" method="post" onsubmit="return confirm('¿Estás seguro de eliminar este producto?');">
+                            <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                        </form>
                     </td>
                 </tr>
                 </tbody>

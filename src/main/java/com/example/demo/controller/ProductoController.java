@@ -123,7 +123,40 @@ public class ProductoController {
 
         return "redirect:/menu";
     }
+    
+    
+    
+    
+    //Detalles Producto 
+    
+    
+
+    @GetMapping("/detalles_producto/{id}")
+    public String mostrarDetallesProducto(@PathVariable Long id, Model model) {
+        ProductosEntity productosEntity = productoService.buscarProductoPorId(id);
+        model.addAttribute("producto", productosEntity);
+        return "detalles_producto";
+    }
+    
+    
+    //Eliminiar Producto
+    
+    
+    // Método para eliminar un producto
+    @PostMapping("/eliminar_producto/{id}")
+    public String eliminarProducto(@PathVariable Long id) {
+        productoService.eliminarProducto(id);
+        return "redirect:/menu"; 
+    }
 }
+    
+
+    
+    
+    
+    
+    
+
     
     
     
