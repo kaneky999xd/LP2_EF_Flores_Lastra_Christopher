@@ -12,7 +12,9 @@ import com.example.demo.entity.UsuarioEntity;
 import jakarta.servlet.http.HttpSession;
 
 public interface UsuarioService {
-	void crearUsuario(UsuarioEntity usuarioEntity, Model model, MultipartFile foto);
-	boolean validarUsuario(UsuarioEntity usuarioEntity, HttpSession session);
-	UsuarioEntity buscarUsuarioPorCorreo(String correo);
+
+	void CrearUsuario(UsuarioEntity usuarioentity, Model model, MultipartFile foto);
+	boolean validarUsuario(UsuarioEntity usuarioentity ,HttpSession session);
+	UsuarioEntity buscarUsuarioporCorreo(String correo);
+	
 }

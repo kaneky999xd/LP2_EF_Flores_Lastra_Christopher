@@ -1,163 +1,159 @@
 package com.example.demo.controller;
 
-import java.util.ArrayList;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import com.example.demo.entity.DetallePedidoEntity;
-import com.example.demo.entity.ProductosEntity;
+
+import com.example.demo.entity.ProductoEntity;
+import com.example.demo.entity.CategoriaEntity;
 import com.example.demo.entity.UsuarioEntity;
-import com.example.demo.model.Pedido;
-import com.example.demo.service.ProductosService;
+import com.example.demo.repository.ProductoRepository;
+
+import com.example.demo.service.CategoriaService;
+import com.example.demo.service.ProductoService;
 import com.example.demo.service.UsuarioService;
+import com.example.demo.service.impl.PdfService;
+
 import jakarta.servlet.http.HttpSession;
+
+
 
 @Controller
 public class ProductoController {
 
     @Autowired
+    private ProductoService productoservice;
+
+    @Autowired
     private UsuarioService usuarioService;
 
     @Autowired
-    private ProductosService productoService;
+    private CategoriaService tipoCategoriaService;
+
+    @Autowired
+    private ProductoRepository productosRepository;
+
+    @Autowired
+    private PdfService pdfService;
 
     @GetMapping("/menu")
-    public String showMenu(HttpSession session, Model model) {
-        if (session.getAttribute("usuario") == null) {
+    private String ViewMenu(HttpSession session, Model model) {
+
+        if(session.getAttribute("usuario") == null) {
             return "redirect:/";
         }
 
         String correo = session.getAttribute("usuario").toString();
-        UsuarioEntity usuarioEntity = usuarioService.buscarUsuarioPorCorreo(correo);
-        model.addAttribute("foto", usuarioEntity.getUrlImagen());
+        UsuarioEntity usuarioEncontrado = usuarioService.buscarUsuarioporCorreo(correo);
+        model.addAttribute("usuarioNombre", "Bienvenido "+usuarioEncontrado.getNombres());
 
-        List<ProductosEntity> productos = productoService.buscarTodosProductos();
-        model.addAttribute("productos", productos);
-
-        List<Pedido> productoSession = null;
-        if (session.getAttribute("carrito") == null) {
-            productoSession = new ArrayList<Pedido>();
-        } else {
-            productoSession = (List<Pedido>) session.getAttribute("carrito");
-        }
-        model.addAttribute("cant_carrito", productoSession.size());
-
-        List<DetallePedidoEntity> detallePedidoEntityList = new ArrayList<DetallePedidoEntity>();
-        Double total = 0.0;
-
-        for (Pedido pedido : productoSession) {
-            DetallePedidoEntity detallePedidoEntity = new DetallePedidoEntity();
-            ProductosEntity productoEntity = productoService.buscarProductoPorId(Long.valueOf(pedido.getProductoId()));
-            detallePedidoEntity.setProductoEntity(productoEntity);
-            detallePedidoEntity.setCantidad(pedido.getCantidad());
-            detallePedidoEntityList.add(detallePedidoEntity);
-            total += pedido.getCantidad() * productoEntity.getPrecio();
-        }
-        model.addAttribute("carrito", detallePedidoEntityList);
-        model.addAttribute("total", total);
+        List<ProductoEntity> productos = productoservice.buscarTodosProductos();
+        model.addAttribute("lst_productos", productos);
 
         return "menu";
     }
 
-
-    // Método GET para mostrar el formulario de registro de productos
     @GetMapping("/registrar_producto")
-    public String mostrarFormularioRegistro() {
-        return "registrar_producto";
+    private String ViewRegistrarProducto(Model model, HttpSession session) {
+
+        String correo = session.getAttribute("usuario").toString();
+        UsuarioEntity usuarioEncontrado = usuarioService.buscarUsuarioporCorreo(correo);
+
+        List<CategoriaEntity> categorias = tipoCategoriaService.buscarTodosCategorias();
+        model.addAttribute("lst_categorias", categorias);
+        model.addAttribute("producto", new ProductoEntity());
+        model.addAttribute("usuarioNombre", "Bienvenido "+usuarioEncontrado.getNombres());
+
+        return "crear_producto";
     }
 
-    // Método POST para agregar un producto
-    @PostMapping("/agregar_producto")
-    public String agregarProducto(@RequestParam("nombre") String nombre,
-                                  @RequestParam("precio") Double precio,
-                                  @RequestParam("stock") Integer stock,
-                                  @RequestParam("categoria") String categoria) {
+    @PostMapping("/registrar_producto")
+    private String RegistrarProducto(ProductoEntity producto) {
 
-        // Crear un nuevo objeto ProductosEntity y configurar los datos
-        ProductosEntity producto = new ProductosEntity();
-        producto.setNombre(nombre);
-        producto.setPrecio(precio);
-        producto.setStock(stock);
-        producto.setCategoria(categoria);
+        productoservice.crearProducto(producto);
 
-        // Guardar el producto usando el servicio
-        productoService.crearProducto(producto);
-
-        // Redirigir de vuelta al menú principal después de agregar el producto
         return "redirect:/menu";
     }
-    
-    
-    
-    //Actualizar producto
-    
+
     @GetMapping("/editar_producto/{id}")
-    public String mostrarFormularioEdicion(@PathVariable("id") Long id, Model model) {
-        ProductosEntity producto = productoService.buscarProductoPorId(id);
-        model.addAttribute("producto", producto);
-        return "editar_producto"; // Nombre de la vista de edición (editar_producto.html)
+    private String ViewEditarProducto(@PathVariable("id") Integer id, Model model, HttpSession session) {
+
+        String correo = session.getAttribute("usuario").toString();
+        UsuarioEntity usuarioEncontrado = usuarioService.buscarUsuarioporCorreo(correo);
+
+        ProductoEntity productoBuscar = productoservice.buscarPorId(id);
+        List<CategoriaEntity> categorias = tipoCategoriaService.buscarTodosCategorias();
+        model.addAttribute("lst_categorias", categorias);
+
+        model.addAttribute("usuarioNombre", "Bienvenido "+usuarioEncontrado.getNombres());
+        model.addAttribute("producto", productoBuscar);
+
+        return "editar_producto";
     }
 
-    @PostMapping("/actualizar_producto/{id}")
-    public String actualizarProducto(@PathVariable("id") Long id,
-                                     @RequestParam("nombre") String nombre,
-                                     @RequestParam("precio") Double precio,
-                                     @RequestParam("stock") Integer stock,
-                                     @RequestParam("categoria") String categoria) {
+    @PostMapping("/editar_producto")
+    private String EditarProducto(Model model, ProductoEntity producto) {
 
-        ProductosEntity productoActual = productoService.buscarProductoPorId(id);
-
-        if (productoActual != null) {
-            productoActual.setNombre(nombre);
-            productoActual.setPrecio(precio);
-            productoActual.setStock(stock);
-            productoActual.setCategoria(categoria);
-
-            productoService.actualizarProducto(productoActual);
-        }
+        productoservice.actualizarProducto(producto);
 
         return "redirect:/menu";
     }
-    
-    
-    
-    
-    //Detalles Producto 
-    
-    
 
-    @GetMapping("/detalles_producto/{id}")
-    public String mostrarDetallesProducto(@PathVariable Long id, Model model) {
-        ProductosEntity productosEntity = productoService.buscarProductoPorId(id);
-        model.addAttribute("producto", productosEntity);
-        return "detalles_producto";
+    @GetMapping("/ver_producto/{id}")
+    private String ViewDetallesProducto(@PathVariable("id") Integer id, Model model, HttpSession session) {
+
+        String correo = session.getAttribute("usuario").toString();
+        UsuarioEntity usuarioEncontrado = usuarioService.buscarUsuarioporCorreo(correo);
+
+        ProductoEntity productoEncontrado = productoservice.buscarPorId(id);
+
+        model.addAttribute("producto", productoEncontrado);
+        model.addAttribute("usuarioNombre", "Bienvenido "+usuarioEncontrado.getNombres());
+
+        return "detalle_producto";
     }
-    
-    
-    //Eliminiar Producto
-    
-    
-    // Método para eliminar un producto
-    @PostMapping("/eliminar_producto/{id}")
-    public String eliminarProducto(@PathVariable Long id) {
-        productoService.eliminarProducto(id);
-        return "redirect:/menu"; 
+
+    @GetMapping("/eliminar_producto/{id}")
+    private String eliminarProducto(@PathVariable("id") Integer id, Model model) {
+        ProductoEntity productoEliminado = productoservice.buscarPorId(id);
+        productoservice.eliminarProducto(id);
+        
+        model.addAttribute("mensaje", "Se eliminó el producto con código " + productoEliminado.getId_Producto());
+
+        return "redirect:/menu";
+    }
+
+    @GetMapping("/generar_pdf")
+    private ResponseEntity<InputStreamResource> generarPdf(HttpSession session, Model model) throws IOException {
+
+        String correo = session.getAttribute("usuario").toString();
+        UsuarioEntity usuarioEncontrado = usuarioService.buscarUsuarioporCorreo(correo);
+
+        Map<String, Object> datosPdf = new HashMap<>();
+        datosPdf.put("productoPdf", productosRepository.findAll());
+        datosPdf.put("usuarioNombre", "Hecho por "+usuarioEncontrado.getNombres());
+
+        ByteArrayInputStream pdfBytes = pdfService.generarPdfdeHtml("template_pdf", datosPdf);
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("Content-Disposition", "inline; filename=productos.pdf");
+
+        return ResponseEntity.ok()
+                .headers(httpHeaders)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(new InputStreamResource(pdfBytes));
     }
 }
-    
-
-    
-    
-    
-    
-    
-
-    
-    
-    
-    

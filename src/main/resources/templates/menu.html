@@ -1,151 +1,56 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Navbar Example</title>
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
-    <!-- FontAwesome -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    <style>
-        .profile-pic {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-        .cart-icon {
-            position: relative;
-            font-size: 24px;
-            color: #333;
-            margin-left: 20px;
-        }
-        .cart-badge {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background-color: red;
-            color: white;
-            border-radius: 50%;
-            padding: 4px 8px;
-            font-size: 12px;
-            font-weight: bold;
-            min-width: 18px;
-            text-align: center;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Productos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/menu.css" rel="stylesheet"> <!-- Agregar referencia a detalle.css -->
 </head>
-<body>
-<nav class="navbar navbar-light" style="background-color: #e3f2fd;">
-    <a class="navbar-brand" th:href="@{/menu}">Productos</a>
-    <!-- Botón para Registrar Producto -->
-    <a class="btn btn-outline-primary" th:href="@{/registrar_producto}" role="button">Registrar Producto</a>
-
-  <form action="/filtrar_producto" method="get">
-    <input type="number" name="id" placeholder="Ingrese ID del producto" required>
-    <button type="submit">Buscar</button>
-</form>
-
-    <div class="form-inline my-2 my-lg-0 ml-auto">
-        <img th:src="@{'/usuario_foto/' + ${foto}}" alt="Profile" class="profile-pic">
-        <a class="btn btn-outline-danger ml-2" th:href="@{/logout}" role="button">Logout</a>
-        <a class="btn btn-link" data-toggle="modal" data-target="#exampleModal">
-            <svg class="bi bi-cart3" width="1.5em" height="1.5em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" d="M1 1a.5.5 0 0 1 .5-.5h1.7l1.88 6.785a.5.5 0 0 0 .48.365h8.31a.5.5 0 0 0 .48-.365L13.8 3.5h1.7a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H3.612l-.47 1.692a.5.5 0 0 0 .48.608h8.682a1.5 1.5 0 1 0 1.342-2H4.572l-.47 1.692a.5.5 0 0 0 .48.608h8.682a1.5 1.5 0 1 0 1.342-2H5.38a.5.5 0 1 1 0 1H2.128a1.5 1.5 0 1 0 1.342-2H1V1z"/>
-            </svg>
-            <span th:text="${cant_carrito}" class="badge badge-danger"></span>
-        </a>
-    </div>
-</nav>
-
-<div class="container mt-5">
-    <div class="row">
-        <div class="col">
-            <table class="table table-bordered">
-                <thead class="thead-dark">
-                <tr>
-                    <th scope="col">ID</th>
-                    <th scope="col">Nombre</th>
-                    <th scope="col">Precio</th>
-                    <th scope="col">Stock</th>
-                    <th scope="col">Categoría</th>
-                    <th scope="col">Acciones</th>
-                </tr>
+<body class="bg-light">
+    <div class="container mt-4">
+        <div class="p-3 border bg-white">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0" th:text="${usuarioNombre}"></h5>
+                <a th:href="@{/cerrar_sesionP}" class="btn btn-secondary">Cerrar sesion</a>|
+            </div>
+            
+            <a th:href="@{/registrar_producto}" class="btn btn-primary">Registrar</a>
+            <table class="table mt-4">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre Producto</th>
+                        <th>Precio</th>
+                        <th>Stock</th>
+                        <th>Categoría</th>
+                        <th>Acciones</th>
+                    </tr>
                 </thead>
                 <tbody>
-                <tr th:each="producto : ${productos}">
-                    <td th:text="${producto.id}"></td> <!-- Mostrar ID del producto -->
-                    <td th:text="${producto.nombre}"></td>
-                    <td th:text="'S/ ' + ${producto.precio}"></td>
-                    <td th:text="${producto.stock}"></td>
-                    <td th:text="${producto.categoria}"></td>
-                    <td>
-                        <a th:href="@{'/editar_producto/' + ${producto.id}}" class="btn btn-info btn-sm">Editar</a>
-                        <a th:href="@{'/detalles_producto/' + ${producto.id}}" class="btn btn-primary btn-sm">Detalles</a>
-                        <form th:action="@{'/eliminar_producto/' + ${producto.id}}" method="post" onsubmit="return confirm('¿Estás seguro de eliminar este producto?');">
-                            <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
-                        </form>
-                    </td>
-                </tr>
+                    <tr th:each="producto : ${lst_productos}">
+                        <td th:text="${producto.Id_Producto}"></td>
+                        <td th:text="${producto.nombre_producto}"></td>
+                        <td th:text="${producto.precio}"></td>
+                        <td th:text="${producto.stock}"></td>
+                        <td th:text="${producto.catagoriaLYSG.nombre_categoria}"></td>
+                        <td>
+                            <a th:href="@{/ver_producto/{idChris}(idChris=${producto.Id_Producto})}" class="btn btn-info">Ver</a> |
+                            <a th:href="@{/editar_producto/{idChris}(idChris=${producto.Id_Producto})}" class="btn btn-warning">Editar</a>  
+                            <a th:href="@{/eliminar_producto/{idChris}(idChris=${producto.Id_Producto})}" class="btn btn-danger">Eliminar</a> 
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
-    </div>
-</div>
-
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Carrito de Compras</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="text-right mr-4">
-                <a target="_blank" th:href="@{/generar_pdf}" class="btn btn-info mt-3">Generar PDF</a>
-            </div>
-            <div class="modal-body">
-                <div class="container-fluid">
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th scope="col">Producto</th>
-                            <th scope="col">Cantidad</th>
-                            <th scope="col">Precio Unitario</th>
-                            <th scope="col">Acciones</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="item: ${carrito}">
-                            <td th:text="${item.productoEntity.nombre}"></td>
-                            <td th:text="${item.cantidad}"></td>
-                            <td th:text="'S/ ' + ${item.productoEntity.precio}"></td>
-                            <td>
-                                <a th:href="@{/eliminar_producto_carrito/{id}(id=${item.productoEntity.productoId})}" class="btn btn-danger">Eliminar</a>
-                            </td>
-                        </tr>
-                        </tbody>
-                        <tfoot>
-                        <tr>
-                            <td colspan="2"><strong>Total</strong></td>
-                            <td colspan="2" th:text="'S/ ' + ${total}"></td>
-                        </tr>
-                        </tfoot>
-                    </table>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Seguir Comprando</button>
-                <a th:if="${total > 0}" th:href="@{/realizar_pedido}" class="btn btn-primary">Realizar Pedido</a>
-            </div>
+    
+        <div class="d-flex justify-content-end mt-3">
+            <a th:href="@{/generar_pdf}" class="btn btn-outline-secondary">Generar Pdf</a>
         </div>
     </div>
-</div>
 
-<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-oB6G/z9mTltAVB2CvPqFkz9tcI1+0rjK1zA7/5/A3XddnuHT0veUA7Gxtnq4PvA3" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js" integrity="sha384-8Fa8p87FG8hczvf6e8y8LK4UZvooBU8d+5HjIaS1kNAdmnxP5/8W1TtCOoMd0rrx" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

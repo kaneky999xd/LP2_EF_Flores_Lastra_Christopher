@@ -8,7 +8,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -43,6 +42,4 @@ public class Utilitarios {
 	public static boolean checkPassword(String passwordInput, String hashPassword) {
 		return BCrypt.checkpw(passwordInput, hashPassword);
 	}
-	
-	
 }

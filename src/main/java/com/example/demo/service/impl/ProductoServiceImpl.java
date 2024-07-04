@@ -5,61 +5,54 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
-import com.example.demo.entity.ProductosEntity;
-import com.example.demo.repository.ProductosRepository;
-import com.example.demo.service.ProductosService;
-
+import com.example.demo.entity.ProductoEntity;
+import com.example.demo.repository.ProductoRepository;
+import com.example.demo.service.ProductoService;
 
 @Service
-public class ProductoServiceImpl implements ProductosService{
+public class ProductoServiceImpl implements ProductoService{
 
-	 @Autowired
-	    private ProductosRepository productosRepository;
+	@Autowired
+	private ProductoRepository productorepository;
+	
+	@Override
+	public List<ProductoEntity> buscarTodosProductos() {
+		return productorepository.findAll();
+	}
 
-	 @Override
-	    public List<ProductosEntity> buscarTodosProductos() {
-	        return productosRepository.findAll();
-	    }
+	@Override
+	public ProductoEntity buscarPorId(Integer id) {
+		return productorepository.findById(id).get();
+	}
 
-	    @Override
-	    public ProductosEntity buscarProductoPorId(Long id) {
-	        return productosRepository.findById(id).orElse(null);
-	    }
+	@Override
+	public ProductoEntity crearProducto(ProductoEntity producto) {
+		return productorepository.save(producto);
+	}
 
-	    @Override
-	    public void crearProducto(ProductosEntity producto) {
-	        productosRepository.save(producto);
-	    }
-	    
-	    @Override
-	    public void actualizarProducto(ProductosEntity producto) {
-	        productosRepository.save(producto);
-	        
-	        
-	        
-	    }
-	    @Override
-	    public void eliminarProducto(Long id) {
-	        productosRepository.deleteById(id);
-	    }
-	    
-	    
-	    @Override
-	    public List<ProductosEntity> obtenerTodosProductos() {
-	        return productosRepository.findAll();
-	    }
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
+	@Override
+	public ProductoEntity actualizarProducto(ProductoEntity productos) {
+		
+		ProductoEntity productoBuscado = buscarPorId(productos.getId_Producto());
+		if(productoBuscado != null) {
+			
+			productoBuscado.setNombre_producto(productos.getNombre_producto());
+			productoBuscado.setPrecio(productos.getPrecio());
+			productoBuscado.setStock(productos.getStock());
+			productoBuscado.setCatagoriaLYSG(productos.getCatagoriaLYSG());
+			return productorepository.save(productoBuscado);
+					
+		}
+		
+		return null;
+		
+	}
+
+	@Override
+	public void eliminarProducto(Integer id) {
+
+		productorepository.deleteById(id);
+		
+	}
+
 }

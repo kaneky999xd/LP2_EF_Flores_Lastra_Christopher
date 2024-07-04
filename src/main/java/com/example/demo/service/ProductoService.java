@@ -1,23 +1,18 @@
 package com.example.demo.service;
 
 import java.util.List;
-import java.util.Optional;
 
-import com.example.demo.entity.ProductosEntity;
+import com.example.demo.entity.ProductoEntity;
 
+public interface ProductoService {
 
-
-public interface ProductosService {
-
-    List<ProductosEntity> buscarTodosProductos();
-
-    ProductosEntity buscarProductoPorId(Long id);
-    void crearProducto(ProductosEntity producto);
-
-    void actualizarProducto(ProductosEntity producto);
-    void eliminarProducto(Long id);
-    
-    List<ProductosEntity> obtenerTodosProductos();
-   
+	List<ProductoEntity> buscarTodosProductos();
+	
+	ProductoEntity buscarPorId(Integer id);
+	
+	ProductoEntity crearProducto(ProductoEntity producto);
+	
+	ProductoEntity actualizarProducto(ProductoEntity productos);
+	
+	void eliminarProducto(Integer id);
 }
- 

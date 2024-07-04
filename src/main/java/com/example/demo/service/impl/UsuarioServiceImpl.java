@@ -8,7 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.entity.UsuarioEntity;
-import com.example.demo.repository.UsuarioRepository;
+import com.example.demo.repository.UsarioRepository;
 import com.example.demo.service.UsuarioService;
 import com.example.demo.utils.Utilitarios;
 
@@ -16,59 +16,56 @@ import jakarta.servlet.http.HttpSession;
 
 
 
+
 @Service
 public class UsuarioServiceImpl implements UsuarioService{
 
 	@Autowired
-	private UsuarioRepository usuarioRepository;
+	private UsarioRepository usuariorepository;
 	
-	  
 	@Override
-	public void crearUsuario(UsuarioEntity usuarioEntity, Model model, MultipartFile foto) {
-		// guardar foto
-		String nombreFoto = Utilitarios.guardarImagen(foto);
-		usuarioEntity.setUrlImagen(nombreFoto);
+	public void CrearUsuario(UsuarioEntity usuarioentity, Model model, MultipartFile foto) {
+
 		
-		//Hash Password
-		String passwordHash = Utilitarios.extraerHash(usuarioEntity.getPassword());
-		usuarioEntity.setPassword(passwordHash);
+				String nombre_foto = Utilitarios.guardarImagen(foto);
+				usuarioentity.setUrl_Imagen(nombre_foto);
+				
+				
+				String passwordHash = Utilitarios.extraerHash(usuarioentity.getPassword());
+				usuarioentity.setPassword(passwordHash);
+				
+				usuariorepository.save(usuarioentity);
+				
+				model.addAttribute("usuario", new UsuarioEntity());
 		
-		// guardar usuario
-		usuarioRepository.save(usuarioEntity);
-		
-		// responder a la vista
-		model.addAttribute("registroCorrecto", "Registro Correcto");
-		model.addAttribute("usuario", new UsuarioEntity());
 	}
-	
 
 	@Override
-	public boolean validarUsuario(UsuarioEntity usuarioEntity, HttpSession session) {
-		UsuarioEntity usuarioEncontradoPorcCorreo = 
-				usuarioRepository.findByCorreo(usuarioEntity.getCorreo());
+	public boolean validarUsuario(UsuarioEntity usuarioentity, HttpSession session) {
 		
-		// Correo existe?
-		if(usuarioEncontradoPorcCorreo == null) {
+		UsuarioEntity usuarioEncontradoCorreo = usuariorepository.findById(usuarioentity.getCorreo()).get();
+				
+		
+		if(usuarioEncontradoCorreo == null) {
+			
 			return false;
 		}
-		// validar si el password input hace match con password de base de datos
-		if(!Utilitarios.checkPassword(usuarioEntity.getPassword(), 
-				usuarioEncontradoPorcCorreo.getPassword())) {
+		 
+		if(!Utilitarios.checkPassword(usuarioentity.getPassword(), 
+				usuarioEncontradoCorreo.getPassword())) {
+		
 			return false;
+			
 		}
 		
-		//login exitoso
-		session.setAttribute("usuario", usuarioEncontradoPorcCorreo.getCorreo());
+		session.setAttribute("usuario", usuarioEncontradoCorreo.getCorreo());
 		
 		return true;
 	}
-	
-	
-
 
 	@Override
-	public UsuarioEntity buscarUsuarioPorCorreo(String correo) {
-		return usuarioRepository.findByCorreo(correo);
+	public UsuarioEntity buscarUsuarioporCorreo(String correo) {
+		return usuariorepository.findByCorreo(correo);
 	}
 
 }
